@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Notes Tracker & Share Tool</title>
+    <meta name="description" content="Track, search, filter, and share Google Cloud BigQuery release updates directly to X (formerly Twitter).">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Tweet Composer Panel (Left) -->
+        <aside class="composer-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <i class="fa-brands fa-x-twitter x-logo"></i>
+                    <h2>Tweet Composer</h2>
+                </div>
+                <p class="subtitle">Select a release note to craft and share your tweet.</p>
+            </div>
+            
+            <div class="composer-body">
+                <div class="composer-card">
+                    <label for="tweet-text">Compose Tweet</label>
+                    <textarea id="tweet-text" placeholder="Select an update from the feed or write your own custom tweet..." maxlength="280"></textarea>
+                    
+                    <div class="composer-meta">
+                        <span id="char-counter" class="char-counter">0 / 280</span>
+                    </div>
+                </div>
+
+                <div class="selected-note-preview" id="selected-preview" style="display: none;">
+                    <div class="preview-header">
+                        <span class="preview-label">Selected Source Note</span>
+                        <button class="clear-selection-btn" id="clear-selection-btn" title="Clear selection">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preview-content" id="preview-content"></div>
+                </div>
+            </div>
+
+            <div class="composer-footer">
+                <button id="tweet-btn" class="btn btn-primary btn-tweet" disabled>
+                    <i class="fa-brands fa-x-twitter"></i> Share on X
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area (Right) -->
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="title-section">
+                    <div class="badge">Google Cloud</div>
+                    <h1>BigQuery Release Notes</h1>
+                </div>
+                
+                <div class="action-section">
+                    <button id="refresh-btn" class="btn btn-refresh" aria-label="Refresh release notes">
+                        <i id="refresh-icon" class="fa-solid fa-arrows-rotate"></i>
+                        <span>Refresh Feed</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Search & Filters Glass Bar -->
+            <section class="filters-bar">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search releases by keyword, feature, or date...">
+                </div>
+                
+                <div class="category-filters" id="category-filters">
+                    <button class="filter-chip active" data-category="all">All Updates</button>
+                    <button class="filter-chip" data-category="feature">Features</button>
+                    <button class="filter-chip" data-category="change">Changes</button>
+                    <button class="filter-chip" data-category="deprecation">Deprecations</button>
+                    <button class="filter-chip" data-category="general">General</button>
+                </div>
+            </section>
+
+            <!-- Release Notes List Container -->
+            <section class="feed-section">
+                <!-- Loading State -->
+                <div id="loading-state" class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Fetching latest release notes from Google Cloud...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="error-state" style="display: none;">
+                    <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+                    <h3>Failed to Load Feed</h3>
+                    <p id="error-message">Could not connect to the release notes RSS feed.</p>
+                    <button id="retry-btn" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrows-rotate"></i> Try Again
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <i class="fa-solid fa-folder-open empty-icon"></i>
+                    <h3>No Release Notes Found</h3>
+                    <p>Try refining your search or filters.</p>
+                </div>
+
+                <!-- Feed list -->
+                <div id="release-notes-feed" class="release-notes-feed"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-check-circle toast-icon"></i>
+        <span id="toast-text">Success!</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
